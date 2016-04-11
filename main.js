@@ -19,9 +19,10 @@ var buttons = document.getElementsByName('note');
       var state = false;
       var tickNotes = ["E4", "G4"];
       var otherNotes = ["E3", "G3"];
-      var tick = true;
+      var tick = [true, true];
       var stype = [2, 2];
       var optionsShown = [false, false];
+      var silence = [false, false];
       
       var soundType = [[], []];
       for (var i = 0; i < 2; i++) {
@@ -54,7 +55,7 @@ var buttons = document.getElementsByName('note');
         var s;
         var note;
         var t;
-        if (first[id] && tick) {
+        if (first[id] && tick[id]) {
           note = tickNotes[id];
         } else {
           note = otherNotes[id];
@@ -103,36 +104,50 @@ var buttons = document.getElementsByName('note');
             c.innerHTML = c.innerHTML + "W";
             func = function(time) {};
             len = "1n";
+            if (first[id])
+                silence[id] = true;
             break;
           case '9':
             c.innerHTML = c.innerHTML + "H";
             func = function(time) {};
             len = "2n";
+            if (first[id])
+                silence[id] = true;
             break;
           case '10':
             c.innerHTML = c.innerHTML + "Q";
             func = function(time) {};
             len = "4n";
+            if (first[id])
+                silence[id] = true;
             break;
           case '11':
             c.innerHTML = c.innerHTML + "E";
             func = function(time) {};
             len = "8n";
+            if (first[id])
+                silence[id] = true;
             break;
           case '12':
             c.innerHTML = c.innerHTML + "S";
             func = function(time) {};
             len = "16n";
+            if (first[id])
+                silence[id] = true;
             break;
           case '13':
             c.innerHTML = c.innerHTML + "J";
             func = function(time) {};
             len = "3n";
+            if (first[id])
+                silence[id] = true;
             break;
           case '14':
             c.innerHTML = c.innerHTML + "I";
             func = function(time) {};
             len = "6n";
+            if (first[id])
+                silence[id] = true;
             break;
         }
         var e = t.schedule(func, len);
@@ -174,6 +189,7 @@ var buttons = document.getElementsByName('note');
         schedules[0].clearAll();
         schedules[1].clearAll();
         first = [true, true];
+        silence = [false, false];
         document.getElementById("start").innerHTML = "Start";
         document.getElementById("content0").innerHTML = "";
         document.getElementById("content1").innerHTML = "";
@@ -201,13 +217,14 @@ var buttons = document.getElementsByName('note');
         inner = inner.slice(0, -1);
         if (inner.trim() === "") {
           first[id] = true;
+          silence[id] = false;
         }
         schedules[id].clear();
         document.getElementById("content" + id.toString()).innerHTML = inner;
       }
       
       function changeTick(id) {
-        tick = !tick;
+        tick[id] = !tick[id];
         changeFirstEvent(id);
       }
       
@@ -215,12 +232,12 @@ var buttons = document.getElementsByName('note');
         var s;
         s = soundType[id][stype[id]];
         var n;
-        if (tick) {
+        if (tick[id]) {
           n = tickNotes[id];
         } else {
           n = otherNotes[id];
         }
-        if (firstEvents[id] != null) {
+        if (firstEvents[id] != null && !silence[id]) {
           firstEvents[id][0].callback = function(time) {s.triggerAttackRelease(n, firstEvents[id][1]);};
         }
       }
