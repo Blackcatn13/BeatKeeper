@@ -26,6 +26,7 @@ function ContinuedScheduler() {
         this._lastEvent = event;
         this._continuedEvents.addEvent(event);
         this._loopEnd = event.time + event.duration;
+        return event;
     };
     
     this.clear = function() {
